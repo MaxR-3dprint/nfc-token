@@ -1,0 +1,11 @@
+BEGIN:VCARD
+VERSION:3.0
+FN:Max Mustermann
+ORG:Beispiel GmbH
+TEL:+49123456789
+EMAIL:max@example.com
+ADR:;;Musterstraße 1;Musterstadt;;12345;Deutschland
+URL:https://example.com
+X-SOCIALPROFILE;TYPE=instagram:https://instagram.com/maxmustermann
+NOTE:Mit ❤️ erstellt für Ihren NFC-Tag
+END:VCARD

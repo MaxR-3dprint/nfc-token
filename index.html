@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geschützter Kontakt</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+        .hidden {
+            display: none;
+        }
+        .message {
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+        .success {
+            color: #28a745;
+            border-color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .vcf-details {
+            margin-top: 20px;
+            text-align: left;
+            display: inline-block;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+        .header {
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header mit Logo (wird dynamisch geladen) -->
+    <div id="header" class="header hidden">
+        <img id="logo" src="" alt="Logo" class="logo">
+    </div>
+
+    <!-- Hier wird die VCF-Datei angezeigt, wenn der Token stimmt -->
+    <div id="vcf-section" class="hidden">
+        <!-- VCF-Details -->
+        <div id="vcf-details" class="vcf-details">
+            <p><strong>Name:</strong> <span id="vcf-name">Max Mustermann</span></p>
+            <p><strong>Telefon:</strong> <span id="vcf-phone">+49 123 456789</span></p>
+            <p><strong>E-Mail:</strong> <span id="vcf-email">max@example.com</span></p>
+            <p><strong>Adresse:</strong> <span id="vcf-address">Musterstraße 1, 12345 Musterstadt</span></p>
+            <p><strong>Homepage:</strong> <a id="vcf-homepage" href="#" target="_blank">https://example.com</a></p>
+            <p><strong>Instagram:</strong> <a id="vcf-instagram" href="#" target="_blank">https://instagram.com/maxmustermann</a></p>
+        </div>
+
+        <!-- Download-Button -->
+        <a id="vcf-link" href="#" class="button">📇 Kontakt herunterladen</a>
+    </div>
+
+    <!-- Fehlermeldung bei ungültigem Token -->
+    <div id="message" class="message hidden"></div>
+
+    <!-- Link zur Datenschutzerklärung -->
+    <p style="margin-top: 40px;">
+        <a href="datenschutz.html">📜 Datenschutzerklärung</a>
+    </p>
+
+    <script>
+        // 🔑 Liste der gültigen Token-Hashes und der zugehörigen Daten
+        const HASH_VCF_MAP = {
+            "73de746f1bbe75782526be267d681ec128e1b9fca1bbfd04eba92b6869158264": {  // Hash für Token 1
+                file: "kontakt1.vcf",
+                name: "Max Mustermann",
+                phone: "+49 123 456789",
+                email: "max@example.com",
+                address: "Musterstraße 1, 12345 Musterstadt",
+                homepage: "https://example.com",
+                instagram: "https://instagram.com/maxmustermann",
+                logo: "logo1.png"
+            },
+            "61e3d83f8c1383eb0870f44b5165ac6c034484036bfadaff5c0b9a9b3210cdd2": {  // Hash für Token 2
+                file: "kontakt2.vcf",
+                name: "Erika Musterfrau",
+                phone: "+49 987 654321",
+                email: "erika@example.com",
+                address: "Beispielweg 2, 54321 Beispielstadt",
+                homepage: "https://erika-example.com",
+                instagram: "https://instagram.com/erikamusterfrau",
+                logo: "logo2.png"
+            },
+            "aa30f50062231028abb80d052aa85f06ac3ccb051676ab7792058d003d7f0711": {  // Hash für Token 3
+                file: "kontakt3.vcf",
+                name: "John Doe",
+                phone: "+1 555 1234567",
+                email: "john@example.com",
+                address: "123 Main St, Springfield, USA",
+                homepage: "https://john-example.com",
+                instagram: "https://instagram.com/johndoe",
+                logo: "logo3.png"
+            }
+        };
+
+        // Prüfe den Token aus der URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        const vcfSection = document.getElementById('vcf-section');
+        const messageElement = document.getElementById('message');
+        const vcfLink = document.getElementById('vcf-link');
+        const vcfName = document.getElementById('vcf-name');
+        const vcfPhone = document.getElementById('vcf-phone');
+        const vcfEmail = document.getElementById('vcf-email');
+        const vcfAddress = document.getElementById('vcf-address');
+        const vcfHomepage = document.getElementById('vcf-homepage');
+        const vcfInstagram = document.getElementById('vcf-instagram');
+        const headerElement = document.getElementById('header');
+        const logoElement = document.getElementById('logo');
+
+        if (token) {
+            // Berechne den SHA-256-Hash des Tokens
+            const tokenHash = async (text) => {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(text);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+            };
+
+            tokenHash(token).then(hash => {
+                if (HASH_VCF_MAP[hash]) {
+                    // Hash ist gültig: Zeige Header, VCF-Datei und Details an
+                    headerElement.classList.remove('hidden');
+                    logoElement.src = HASH_VCF_MAP[hash].logo;
+                    vcfSection.classList.remove('hidden');
+                    vcfLink.href = HASH_VCF_MAP[hash].file;
+                    vcfName.textContent = HASH_VCF_MAP[hash].name;
+                    vcfPhone.textContent = HASH_VCF_MAP[hash].phone;
+                    vcfEmail.textContent = HASH_VCF_MAP[hash].email;
+                    vcfAddress.textContent = HASH_VCF_MAP[hash].address;
+                    vcfHomepage.href = HASH_VCF_MAP[hash].homepage;
+                    vcfHomepage.textContent = HASH_VCF_MAP[hash].homepage;
+                    vcfInstagram.href = HASH_VCF_MAP[hash].instagram;
+                    vcfInstagram.textContent = HASH_VCF_MAP[hash].instagram;
+                } else {
+                    // Hash ist ungültig: Zeige eine Fehlermeldung an
+                    messageElement.textContent = "❌ Zugriff verweigert. Ungültiger Token.";
+                    messageElement.classList.remove('hidden');
+                    messageElement.classList.add('error');
+                }
+            });
+        } else {
+            messageElement.textContent = "🔑 Kein Token gefunden. Scannen Sie den NFC-Tag.";
+            messageElement.classList.remove('hidden');
+            messageElement.classList.add('error');
+        }
+    </script>
+</body>
+</html>

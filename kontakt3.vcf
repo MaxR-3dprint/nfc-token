@@ -1,0 +1,11 @@
+BEGIN:VCARD
+VERSION:3.0
+FN:John Doe
+ORG:Beispiel GmbH
+TEL:+15551234567
+EMAIL:john@example.com
+ADR:;;123 Main St;Springfield;;12345;USA
+URL:https://john-example.com
+X-SOCIALPROFILE;TYPE=instagram:https://instagram.com/johndoe
+NOTE:Mit ❤️ erstellt für Ihren NFC-Tag
+END:VCARD

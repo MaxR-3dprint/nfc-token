@@ -1,0 +1,11 @@
+BEGIN:VCARD
+VERSION:3.0
+FN:Erika Musterfrau
+ORG:Beispiel GmbH
+TEL:+49987654321
+EMAIL:erika@example.com
+ADR:;;Beispielweg 2;Beispielstadt;;54321;Deutschland
+URL:https://erika-example.com
+X-SOCIALPROFILE;TYPE=instagram:https://instagram.com/erikamusterfrau
+NOTE:Mit ❤️ erstellt für Ihren NFC-Tag
+END:VCARD
